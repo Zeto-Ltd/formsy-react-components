@@ -29,6 +29,34 @@ var Select = React.createClass({
         this.props.onChange(this.props.name, value);
     },
 
+    componentWillReceiveProps: function(nextProps) {
+        // reset the currently selected value if the next set of options
+        // has no matching value
+        var valueMapper = function(item) {
+            return item.value
+        };
+        var nextOptionValues = nextProps.options.map(valueMapper).sort();
+        var curOptionValues = this.props.options.map(valueMapper).sort();
+
+        var optionComparator = function(currentValue, index) {
+            return currentValue == curOptionValues[index];
+        };
+        // next set of options are not equal to current, check the selected value
+        if (nextOptionValues.length !== curOptionValues.length ||
+            !nextOptionValues.every(optionComparator)) {
+            var curValue = this.getValue();
+            var selectedValue = nextProps.options.filter(function(item) {
+                return item.value == curValue;
+            });
+            // set selected value to first on list for new options
+            if (selectedValue.length === 0) {
+                // TODO: should use resetValue() but this requires more control
+                // over this.state._pristineValue than we have currently
+                this.setValue(nextOptionValues[0]);
+            }
+        }
+    },
+
     render: function() {
 
         if (this.getLayout() === 'elementOnly') {

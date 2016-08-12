@@ -12,6 +12,7 @@ var Row = require('./row');
 var Select = React.createClass({
     displayName: 'Select',
 
+
     mixins: [Formsy.Mixin, ComponentMixin],
 
     changeValue: function changeValue(event) {
@@ -30,6 +31,29 @@ var Select = React.createClass({
         }
         this.setValue(value);
         this.props.onChange(this.props.name, value);
+    },
+
+    componentWillReceiveProps: function componentWillReceiveProps(nextProps) {
+        // reset the currently selected value if the next set of options
+        // has no matching value
+        var valueMapper = function valueMapper(item) {
+            return item.value;
+        };
+        var nextOptionValues = nextProps.options.map(valueMapper).sort();
+        var curOptionValues = this.props.options.map(valueMapper).sort();
+
+        var optionComparator = function optionComparator(currentValue, index) {
+            return currentValue == curOptionValues[index];
+        };
+        if (nextOptionValues.length !== curOptionValues.length || !nextOptionValues.every(optionComparator)) {
+            var curValue = this.getValue();
+            var selectedValue = nextProps.options.filter(function (item) {
+                return item.value == curValue;
+            });
+            if (selectedValue.length === 0) {
+                this.setValue(nextOptionValues[0]);
+            }
+        }
     },
 
     render: function render() {

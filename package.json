@@ -1,6 +1,6 @@
 {
   "name": "formsy-react-components",
-  "version": "0.6.6-zeto",
+  "version": "0.6.6-1zeto",
   "description": "A set of React JS components for use in a formsy-react form. Markup adheres to Bootstrap structure.",
   "scripts": {
     "test": "jest --coverage --noHighlight --verbose",
